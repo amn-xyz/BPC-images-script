@@ -8,15 +8,14 @@ from scraper import BlogPost
 
 # BPC branding style description based on reference images
 BPC_STYLE = """Professional photorealistic image in a clean, bright physiotherapy clinic.
-The medical professional is wearing dark navy blue scrubs with the "BPC" logo 
-(a circle with a swoosh design and the letters "BPC" in white) prominently visible 
-on the chest area of their uniform. The clinic has white walls, modern minimalist 
-furniture, and warm natural lighting. The image should look like a high-quality 
-medical stock photo with a warm, inviting atmosphere.
+The medical professional is wearing dark navy blue scrubs with the BPC logo on the 
+upper chest of the shirt — use the EXACT logo design shown in the reference images. 
+The logo should appear only once, on the therapist's shirt. The clinic has white 
+walls, modern minimalist furniture, and warm natural lighting. The image should look 
+like a high-quality medical stock photo with a warm, inviting atmosphere.
 
-IMPORTANT FRAMING: The image should be cropped so that faces are NOT visible — 
-keep faces out of frame by framing from the neck/chest down, or from behind. 
-Focus on the hands, body, and the treatment area. No faces should be shown."""
+Full people should be shown naturally, including faces. 
+Do not include any text overlays or watermarks in the image."""
 
 
 # Keywords that map to specific body parts/treatments
@@ -88,7 +87,7 @@ TREATMENT_SCENES = {
     'neck': 'A physiotherapist gently treating a patient\'s neck. The patient is lying face-up on a white treatment table while the therapist supports and mobilizes the cervical spine area. A subtle red glow highlights the neck area indicating the point of pain.',
     'lower back': 'A physiotherapist treating a patient\'s lower back. The patient is lying face-down on a white treatment table while the therapist applies manual therapy to the lumbar region.',
     'back': 'A physiotherapist treating a patient\'s back. The patient is lying on a white treatment table while the therapist performs manual therapy on the spine area.',
-    'wrist': 'A close-up shot of a medical professional examining their own wrist, with the BPC logo visible on their white lab coat. The background shows a modern medical office with a laptop.',
+    'wrist': 'A close-up shot of a medical professional examining a patient\'s wrist. The background shows a modern medical office.',
     'hand': 'A physiotherapist examining a patient\'s hand and fingers. The therapist is gently manipulating the affected fingers while the patient is seated.',
     'elbow': 'A physiotherapist treating a patient\'s elbow. The patient is seated while the therapist works on the elbow joint area.',
     'head': 'A physiotherapist performing a gentle head and temple treatment. The patient is lying on a white treatment table while the therapist applies careful manual therapy.',
@@ -141,7 +140,6 @@ def build_prompt(post: BlogPost) -> str:
 
 The image specifically relates to: {post.title}. 
 The focus should be on the {body_part} area being treated.
-Frame the shot so faces are cropped out — show from the neck/chest down or from behind.
 Do not include any text overlays or watermarks in the image."""
 
     return prompt
