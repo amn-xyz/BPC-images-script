@@ -107,22 +107,50 @@ def run_generation(posts, start_from: int, single: int | None, output_dir: str, 
             success_count += 1
             continue
         
-        print(f"[{i}/{total}] 🖼 #{post.number}: {post.title}")
-        
         prompt = build_prompt(post)
         
-        success = generate_image(
-            prompt=prompt,
-            output_path=output_file,
-            reference_images=ref_images if ref_images else None,
-        )
-        
-        if success:
-            print(f"  ✅ Saved: {output_file}")
-            success_count += 1
-        else:
-            print(f"  ❌ Failed to generate image")
-            fail_count += 1
+        # Interactive generation loop
+        while True:
+            print(f"\n[{i}/{total}] 🖼 #{post.number}: {post.title}")
+            
+            success = generate_image(
+                prompt=prompt,
+                output_path=output_file,
+                reference_images=ref_images if ref_images else None,
+            )
+            
+            if success:
+                print(f"  ✅ Saved: {output_file}")
+                
+                # Ask user for approval
+                print(f"\n  📋 Review the generated image: {output_file}")
+                print(f"     1. ✅ Continue (accept & move to next)")
+                print(f"     2. 🔄 Regenerate image")
+                print(f"     3. 🛑 Quit script")
+                
+                while True:
+                    choice = input("\n  Enter choice (1/2/3): ").strip()
+                    if choice in ('1', '2', '3'):
+                        break
+                    print("  ⚠ Invalid choice. Please enter 1, 2, or 3.")
+                
+                if choice == '1':
+                    success_count += 1
+                    break  # Move to next post
+                elif choice == '2':
+                    # Delete the generated image and regenerate
+                    if os.path.exists(output_file):
+                        os.remove(output_file)
+                    print(f"  🔄 Regenerating image for #{post.number}...")
+                    continue  # Re-run the while loop
+                elif choice == '3':
+                    print(f"\n  🛑 Quitting script.")
+                    success_count += 1  # Count the last image as success since it was saved
+                    return  # Exit run_generation entirely
+            else:
+                print(f"  ❌ Failed to generate image")
+                fail_count += 1
+                break  # Move to next post
         
         # Rate limiting delay between images
         if i < total:
