@@ -3,7 +3,26 @@ Prompt Builder: Converts blog post content into AI image generation prompts.
 Matches the BPC branding style from the reference images.
 """
 
+import random
+
 from scraper import BlogPost
+
+
+# Diverse therapist appearances to ensure each image has a unique person
+THERAPIST_APPEARANCES = [
+    "a young Southeast Asian female therapist with long black hair tied in a ponytail",
+    "a middle-aged Caucasian male therapist with short brown hair and a trimmed beard",
+    "a young Black female therapist with shoulder-length curly hair",
+    "an older East Asian male therapist with short gray hair and glasses",
+    "a young South Asian female therapist with dark hair in a bun",
+    "a middle-aged Latino male therapist with short dark hair and a mustache",
+    "a young Caucasian female therapist with short blonde hair",
+    "an older Black male therapist with a shaved head and reading glasses",
+    "a middle-aged Middle Eastern female therapist with long dark wavy hair",
+    "a young East Asian male therapist with medium-length black hair",
+    "a middle-aged Caucasian female therapist with auburn hair pulled back",
+    "a young Latino female therapist with long brown hair in a braid",
+]
 
 
 # BPC branding style description based on reference images
@@ -14,7 +33,10 @@ The logo should appear only once, on the therapist's shirt. The clinic has white
 walls, modern minimalist furniture, and warm natural lighting. The image should look 
 like a high-quality medical stock photo with a warm, inviting atmosphere.
 
-Full people should be shown naturally, including faces. 
+Full people should be shown naturally, including faces.
+IMPORTANT: The therapist's face and appearance MUST match the appearance description 
+provided in the prompt. Do NOT copy the face from the reference images — only use 
+the reference images for the BPC logo design and scrub style.
 Do not include any text overlays or watermarks in the image."""
 
 
@@ -134,10 +156,21 @@ def build_prompt(post: BlogPost) -> str:
     body_part = identify_body_part(post.title, post.content)
     scene = TREATMENT_SCENES.get(body_part, DEFAULT_SCENE)
     
-    prompt = f"""{scene}
+    # Pick a random therapist appearance for this image
+    appearance = random.choice(THERAPIST_APPEARANCES)
+    
+    # Replace the generic "A physiotherapist" with the specific appearance
+    personalized_scene = scene.replace(
+        'A physiotherapist', f'{appearance.capitalize()},', 1
+    ).replace(
+        'a physiotherapist', appearance, 1
+    )
+    
+    prompt = f"""{personalized_scene}
 
 {BPC_STYLE}
 
+The therapist in this image should be {appearance}.
 The image specifically relates to: {post.title}. 
 The focus should be on the {body_part} area being treated.
 Do not include any text overlays or watermarks in the image."""
