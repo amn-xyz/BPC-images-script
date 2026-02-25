@@ -78,8 +78,9 @@ def generate_image(
     # Add reference images if provided
     if reference_images:
         contents.append("Here are reference images showing the BPC branding style. "
-                       "The generated image should match this visual style - "
-                       "especially the dark navy scrubs with the BPC logo:")
+                       "The generated image MUST use the EXACT same BPC logo as shown "
+                       "on the therapist's shirt in these reference images. Match the "
+                       "dark navy scrubs and overall visual style:")
         contents.extend(reference_images)
     
     contents.append(prompt)
@@ -102,9 +103,9 @@ def generate_image(
                         os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
                         with open(output_path, 'wb') as f:
                             f.write(part.inline_data.data)
-                        # Resize to target dimensions
+                        # Resize to fit within target dimensions without stretching
                         img = Image.open(output_path)
-                        img = img.resize((1600, 921), Image.LANCZOS)
+                        img.thumbnail((1600, 921), Image.LANCZOS)
                         img.save(output_path)
                         return True
             

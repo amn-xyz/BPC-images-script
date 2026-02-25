@@ -3,20 +3,41 @@ Prompt Builder: Converts blog post content into AI image generation prompts.
 Matches the BPC branding style from the reference images.
 """
 
+import random
+
 from scraper import BlogPost
+
+
+# Diverse therapist appearances to ensure each image has a unique person
+THERAPIST_APPEARANCES = [
+    "a young Southeast Asian female therapist with long black hair tied in a ponytail",
+    "a middle-aged Caucasian male therapist with short brown hair and a trimmed beard",
+    "a young Black female therapist with shoulder-length curly hair",
+    "an older East Asian male therapist with short gray hair and glasses",
+    "a young South Asian female therapist with dark hair in a bun",
+    "a middle-aged Latino male therapist with short dark hair and a mustache",
+    "a young Caucasian female therapist with short blonde hair",
+    "an older Black male therapist with a shaved head and reading glasses",
+    "a middle-aged Middle Eastern female therapist with long dark wavy hair",
+    "a young East Asian male therapist with medium-length black hair",
+    "a middle-aged Caucasian female therapist with auburn hair pulled back",
+    "a young Latino female therapist with long brown hair in a braid",
+]
 
 
 # BPC branding style description based on reference images
 BPC_STYLE = """Professional photorealistic image in a clean, bright physiotherapy clinic.
-The medical professional is wearing dark navy blue scrubs with the "BPC" logo 
-(a circle with a swoosh design and the letters "BPC" in white) prominently visible 
-on the chest area of their uniform. The clinic has white walls, modern minimalist 
-furniture, and warm natural lighting. The image should look like a high-quality 
-medical stock photo with a warm, inviting atmosphere.
+The medical professional is wearing dark navy blue scrubs with the BPC logo on the 
+upper chest of the shirt — use the EXACT logo design shown in the reference images. 
+The logo should appear only once, on the therapist's shirt. The clinic has white 
+walls, modern minimalist furniture, and warm natural lighting. The image should look 
+like a high-quality medical stock photo with a warm, inviting atmosphere.
 
-IMPORTANT FRAMING: The image should be cropped so that faces are NOT visible — 
-keep faces out of frame by framing from the neck/chest down, or from behind. 
-Focus on the hands, body, and the treatment area. No faces should be shown."""
+Full people should be shown naturally, including faces.
+IMPORTANT: The therapist's face and appearance MUST match the appearance description 
+provided in the prompt. Do NOT copy the face from the reference images — only use 
+the reference images for the BPC logo design and scrub style.
+Do not include any text overlays or watermarks in the image."""
 
 
 # Keywords that map to specific body parts/treatments
@@ -88,7 +109,7 @@ TREATMENT_SCENES = {
     'neck': 'A physiotherapist gently treating a patient\'s neck. The patient is lying face-up on a white treatment table while the therapist supports and mobilizes the cervical spine area. A subtle red glow highlights the neck area indicating the point of pain.',
     'lower back': 'A physiotherapist treating a patient\'s lower back. The patient is lying face-down on a white treatment table while the therapist applies manual therapy to the lumbar region.',
     'back': 'A physiotherapist treating a patient\'s back. The patient is lying on a white treatment table while the therapist performs manual therapy on the spine area.',
-    'wrist': 'A close-up shot of a medical professional examining their own wrist, with the BPC logo visible on their white lab coat. The background shows a modern medical office with a laptop.',
+    'wrist': 'A close-up shot of a medical professional examining a patient\'s wrist. The background shows a modern medical office.',
     'hand': 'A physiotherapist examining a patient\'s hand and fingers. The therapist is gently manipulating the affected fingers while the patient is seated.',
     'elbow': 'A physiotherapist treating a patient\'s elbow. The patient is seated while the therapist works on the elbow joint area.',
     'head': 'A physiotherapist performing a gentle head and temple treatment. The patient is lying on a white treatment table while the therapist applies careful manual therapy.',
@@ -135,13 +156,23 @@ def build_prompt(post: BlogPost) -> str:
     body_part = identify_body_part(post.title, post.content)
     scene = TREATMENT_SCENES.get(body_part, DEFAULT_SCENE)
     
-    prompt = f"""{scene}
+    # Pick a random therapist appearance for this image
+    appearance = random.choice(THERAPIST_APPEARANCES)
+    
+    # Replace the generic "A physiotherapist" with the specific appearance
+    personalized_scene = scene.replace(
+        'A physiotherapist', f'{appearance.capitalize()},', 1
+    ).replace(
+        'a physiotherapist', appearance, 1
+    )
+    
+    prompt = f"""{personalized_scene}
 
 {BPC_STYLE}
 
+The therapist in this image should be {appearance}.
 The image specifically relates to: {post.title}. 
 The focus should be on the {body_part} area being treated.
-Frame the shot so faces are cropped out — show from the neck/chest down or from behind.
 Do not include any text overlays or watermarks in the image."""
 
     return prompt
