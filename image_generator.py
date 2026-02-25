@@ -103,38 +103,30 @@ def generate_image(
                         os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
                         with open(output_path, 'wb') as f:
                             f.write(part.inline_data.data)
-                        # Resize to exactly 1600x921 without stretching:
-                        # 1. Shrink if larger than target
-                        # 2. Paste centered onto a 1600x921 canvas
+                        # Resize to exactly 1600x921, cropping from the top
+                        # to remove heads/faces and keep torsos with BPC branding.
                         target_w, target_h = 1600, 921
                         img = Image.open(output_path)
-                        img.thumbnail((target_w, target_h), Image.LANCZOS)
 
-                        # Sample background color from image edges
-                        edge_pixels = []
-                        w, h = img.size
-                        for x in range(w):
-                            edge_pixels.append(img.getpixel((x, 0)))
-                            edge_pixels.append(img.getpixel((x, h - 1)))
-                        for y in range(h):
-                            edge_pixels.append(img.getpixel((0, y)))
-                            edge_pixels.append(img.getpixel((w - 1, y)))
-                        # Average the edge colors for a seamless background
-                        n = len(edge_pixels)
-                        channels = len(edge_pixels[0]) if isinstance(edge_pixels[0], tuple) else 1
-                        if channels >= 3:
-                            avg_color = tuple(
-                                sum(p[c] for p in edge_pixels) // n
-                                for c in range(min(channels, 3))
-                            )
-                        else:
-                            avg_color = (128, 128, 128)
+                        # Scale so width = target_w (maintain aspect ratio)
+                        scale = target_w / img.width
+                        new_w = target_w
+                        new_h = int(img.height * scale)
+                        img = img.resize((new_w, new_h), Image.LANCZOS)
 
-                        canvas = Image.new('RGB', (target_w, target_h), avg_color)
-                        paste_x = (target_w - img.width) // 2
-                        paste_y = (target_h - img.height) // 2
-                        canvas.paste(img, (paste_x, paste_y))
-                        canvas.save(output_path)
+                        # Crop from the top to remove heads
+                        if new_h > target_h:
+                            # Take the bottom portion of the image
+                            crop_top = new_h - target_h
+                            img = img.crop((0, crop_top, target_w, new_h))
+                        elif new_h < target_h:
+                            # Rare case: image is wider than tall; center vertically
+                            canvas = Image.new('RGB', (target_w, target_h), (0, 0, 0))
+                            paste_y = (target_h - new_h) // 2
+                            canvas.paste(img, (0, paste_y))
+                            img = canvas
+
+                        img.save(output_path)
                         return True
             
             print(f"  ⚠ No image in response (attempt {attempt}/{max_retries})")
