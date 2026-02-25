@@ -103,10 +103,38 @@ def generate_image(
                         os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
                         with open(output_path, 'wb') as f:
                             f.write(part.inline_data.data)
-                        # Resize to fit within target dimensions without stretching
+                        # Resize to exactly 1600x921 without stretching:
+                        # 1. Shrink if larger than target
+                        # 2. Paste centered onto a 1600x921 canvas
+                        target_w, target_h = 1600, 921
                         img = Image.open(output_path)
-                        img.thumbnail((1600, 921), Image.LANCZOS)
-                        img.save(output_path)
+                        img.thumbnail((target_w, target_h), Image.LANCZOS)
+
+                        # Sample background color from image edges
+                        edge_pixels = []
+                        w, h = img.size
+                        for x in range(w):
+                            edge_pixels.append(img.getpixel((x, 0)))
+                            edge_pixels.append(img.getpixel((x, h - 1)))
+                        for y in range(h):
+                            edge_pixels.append(img.getpixel((0, y)))
+                            edge_pixels.append(img.getpixel((w - 1, y)))
+                        # Average the edge colors for a seamless background
+                        n = len(edge_pixels)
+                        channels = len(edge_pixels[0]) if isinstance(edge_pixels[0], tuple) else 1
+                        if channels >= 3:
+                            avg_color = tuple(
+                                sum(p[c] for p in edge_pixels) // n
+                                for c in range(min(channels, 3))
+                            )
+                        else:
+                            avg_color = (128, 128, 128)
+
+                        canvas = Image.new('RGB', (target_w, target_h), avg_color)
+                        paste_x = (target_w - img.width) // 2
+                        paste_y = (target_h - img.height) // 2
+                        canvas.paste(img, (paste_x, paste_y))
+                        canvas.save(output_path)
                         return True
             
             print(f"  ⚠ No image in response (attempt {attempt}/{max_retries})")
