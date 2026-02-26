@@ -105,7 +105,7 @@ def generate_image(
                             f.write(part.inline_data.data)
                         # Resize to exactly 1600x921, cropping from the top
                         # to remove heads/faces and keep torsos with BPC branding.
-                        target_w, target_h = 1600, 921
+                        target_w, target_h = 1600, 1045
                         img = Image.open(output_path)
 
                         # Scale so width = target_w (maintain aspect ratio)
