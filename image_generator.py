@@ -103,9 +103,29 @@ def generate_image(
                         os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
                         with open(output_path, 'wb') as f:
                             f.write(part.inline_data.data)
-                        # Resize to fit within target dimensions without stretching
+                        # Resize to exactly 1600x921, cropping from the top
+                        # to remove heads/faces and keep torsos with BPC branding.
+                        target_w, target_h = 1600, 1045
                         img = Image.open(output_path)
-                        img.thumbnail((1600, 921), Image.LANCZOS)
+
+                        # Scale so width = target_w (maintain aspect ratio)
+                        scale = target_w / img.width
+                        new_w = target_w
+                        new_h = int(img.height * scale)
+                        img = img.resize((new_w, new_h), Image.LANCZOS)
+
+                        # Crop from the top to remove heads
+                        if new_h > target_h:
+                            # Take the bottom portion of the image
+                            crop_top = new_h - target_h
+                            img = img.crop((0, crop_top, target_w, new_h))
+                        elif new_h < target_h:
+                            # Rare case: image is wider than tall; center vertically
+                            canvas = Image.new('RGB', (target_w, target_h), (0, 0, 0))
+                            paste_y = (target_h - new_h) // 2
+                            canvas.paste(img, (0, paste_y))
+                            img = canvas
+
                         img.save(output_path)
                         return True
             
