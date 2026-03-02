@@ -2,7 +2,7 @@
 
 Automatically generate professional, branded cover images for every post on your WordPress blog — no design skills needed.
 
-> **Origin story:** I built this tool to help a physiotherapy clinic in Bangkok automatically create on-brand cover images for every article on their website. It worked so well that I generalized it so anyone can use it for their own blog.
+> **Origin story:** I built this tool to help a physiotherapy clinic in Bangkok automatically create on-brand cover images for every article on their website. I generalized it so anyone can use it for their own blog.
 
 ## What Does This Do?
 
