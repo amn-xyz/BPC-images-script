@@ -1,6 +1,6 @@
 """
 Prompt Builder: Converts blog post content into AI image generation prompts.
-Matches the BPC branding style from the reference images.
+Matches the clinic branding style from the reference images.
 """
 
 import random
@@ -24,9 +24,9 @@ THERAPIST_APPEARANCES = [
 ]
 
 
-# BPC branding style description based on reference images
-BPC_STYLE = """Professional photorealistic image in a clean, bright physiotherapy clinic.
-The medical professional is wearing dark navy blue scrubs with the BPC logo on the 
+# Branding style description based on reference images
+BRAND_STYLE = """Professional photorealistic image in a clean, bright physiotherapy clinic.
+The medical professional is wearing dark navy blue scrubs with the clinic logo on the 
 upper chest of the shirt — use the EXACT logo design shown in the reference images. 
 The logo must appear clearly visible and only once, on the therapist's shirt. 
 The clinic has white walls, modern minimalist furniture, and warm natural lighting. 
@@ -35,10 +35,10 @@ The image should look like a high-quality medical stock photo with a warm, invit
 COMPOSITION RULES (strictly required):
 - Frame the image as a TIGHT CLOSE-UP shot. The camera should be close to the action.
 - Human faces must NOT appear in the frame. Keep the shot from the chin/neck downward.
-  Crop heads out of the image entirely. Show hands, torso, the treated body part, and the BPC logo only.
+  Crop heads out of the image entirely. Show hands, torso, the treated body part, and the clinic logo only.
 - Do NOT include any text overlays or watermarks in the image.
 
-Do NOT copy the face from the reference images. Only use the reference images for the BPC logo design and scrub style."""
+Do NOT copy the face from the reference images. Only use the reference images for the logo design and scrub style."""
 
 
 # Keywords that map to specific body parts/treatments
@@ -134,7 +134,7 @@ TREATMENT_SCENES = {
     'full body balance': 'A physiotherapist helping a patient with balance exercises. The patient is standing on one leg while the therapist provides support and guidance.',
 }
 
-DEFAULT_SCENE = 'A tight close-up shot of a physiotherapist\'s hands actively treating a patient in a bright clinic. The camera frames only the hands, torso, and the area being treated — no faces visible. The therapist\'s dark navy BPC scrubs and logo are clearly visible in the frame.'
+DEFAULT_SCENE = 'A tight close-up shot of a physiotherapist\'s hands actively treating a patient in a bright clinic. The camera frames only the hands, torso, and the area being treated — no faces visible. The therapist\'s dark navy scrubs and clinic logo are clearly visible in the frame.'
 
 
 def identify_body_part(title: str, content: str) -> str:
@@ -164,11 +164,11 @@ def build_prompt(post: BlogPost) -> str:
 
     prompt = f"""{scene}
 
-{BPC_STYLE}
+{BRAND_STYLE}
 
 The image specifically relates to: {post.title}.
 The focus should be on the {body_part} area being treated.
-The therapist's dark navy scrubs with the BPC logo must be clearly visible in frame."""
+The therapist's dark navy scrubs with the clinic logo must be clearly visible in frame."""
 
     return prompt
 
@@ -202,7 +202,7 @@ if __name__ == '__main__':
         date="2025-10-30",
         status="publish",
         category="Blog",
-        url="https://bpcphysio.com/blog/acl-rehab-guide/",
+        url="https://example.com/blog/acl-rehab-guide/",
     )
     
     result = build_prompt_summary(sample)

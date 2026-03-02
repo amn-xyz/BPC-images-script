@@ -31,7 +31,7 @@ QA_PROMPT_TEMPLATE = """\
 2. Thematic Accuracy: The visual concept must clearly make sense and align with the "Blog Title."
 3. Close-up Composition: The image must be framed as a tight, close-up shot.
 4. Visual Diversity: The image must not look too similar in style, subject, or layout to the "Previous Image Styles/Concepts."
-5. BPC Logo Visibility: The BPC logo must be clearly visible on the therapist's clothing. It must match the exact logo design from the reference images (dark navy scrubs, logo on the upper chest). A missing, blurred, or incorrectly styled logo is a failure.
+5. Logo Visibility: The clinic logo must be clearly visible on the therapist's clothing. It must match the exact logo design from the reference images (dark navy scrubs, logo on the upper chest). A missing, blurred, or incorrectly styled logo is a failure.
 
 **Decision Logic:**
 Analyze the image strictly against the five requirements above. Provide a brief reasoning, then output EXACTLY ONE of the following numbers based on your conclusion:
