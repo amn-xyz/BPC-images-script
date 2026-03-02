@@ -24,7 +24,7 @@ def get_client() -> genai.Client:
 
 
 def load_reference_images(ref_dir: str = 'reference_images') -> list[types.Part]:
-    """Load BPC reference images to guide style consistency."""
+    """Load reference images to guide style consistency."""
     ref_path = Path(ref_dir)
     parts = []
     
@@ -77,8 +77,8 @@ def generate_image(
     
     # Add reference images if provided
     if reference_images:
-        contents.append("Here are reference images showing the BPC branding style. "
-                       "The generated image MUST use the EXACT same BPC logo as shown "
+        contents.append("Here are reference images showing the clinic branding style. "
+                       "The generated image MUST use the EXACT same logo as shown "
                        "on the therapist's shirt in these reference images. Match the "
                        "dark navy scrubs and overall visual style:")
         contents.extend(reference_images)
@@ -104,7 +104,7 @@ def generate_image(
                         with open(output_path, 'wb') as f:
                             f.write(part.inline_data.data)
                         # Resize to exactly 1600x921, cropping from the top
-                        # to remove heads/faces and keep torsos with BPC branding.
+                        # to remove heads/faces and keep torsos with branding.
                         target_w, target_h = 1600, 1045
                         img = Image.open(output_path)
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     print("Testing Gemini image generation...")
     
     test_prompt = """A physiotherapist treating a patient's knee in a clean, bright clinic.
-The therapist wears dark navy scrubs with a BPC logo on the chest.
+The therapist wears dark navy scrubs with the clinic logo on the chest.
 Professional, photorealistic, warm lighting."""
     
     success = generate_image(test_prompt, 'output/test_image.png')

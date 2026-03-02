@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BPC Blog Image Generator
+AI Blog Imager
 ========================
 Parses WordPress XML export, generates AI images for each blog post
 using Google Gemini (Nano Banana), with an Anthropic Claude QA loop.
@@ -242,7 +242,7 @@ def run_generation(
 ):
     """Generate images for the specified posts."""
     # Load reference images for style consistency
-    print("Loading BPC reference images...")
+    print("Loading reference images...")
     ref_images = load_reference_images('reference_images')
     if ref_images:
         print(f"  Loaded {len(ref_images)} reference image(s)")
@@ -322,7 +322,7 @@ def run_generation(
 
 def main():
     parser = argparse.ArgumentParser(
-        description='BPC Blog Image Generator - Generate AI images for WordPress blog posts',
+        description='AI Blog Imager - Generate AI images for WordPress blog posts',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
